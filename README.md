@@ -126,4 +126,197 @@ $("#placeholder").html(result);
 </script>
 </body>
 ```
+### 2.Handlebars
 
+-basic conditions
+```js
+{{#each people}}
+  {{#if people.firstName}}
+    condition1
+  {{/if}}
+{{/each}}
+```
+- put it together
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "Ke", img:"Ke.jpg", homepage:"<i>secret</>"};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  <h1>Hello {{name}}</h1>
+  You are {{age}} years old.
+  {{{homepage}}}     //To parse html tag. use triple braces
+</script>
+</body>
+```
+
+- Get data using jQuery's getJSON method
+```js
+<body>
+  <div id="resdiv"></div>
+  <script>
+    var str = $("#testTemplate").html();
+    var template = Handlebars.complie(str);
+    $(function(){
+      $.getJSON("people.json", function(res) {
+        var data = {people:res};
+        var rendered = template(data);
+        $("#resdiv").html(rendered);
+      });
+    });
+  </script>
+  
+  <script id="testTemplate" type="text/x-ejs-template">
+    {{#each people}}
+      {{name}}
+    {{/each}}
+  </script>
+</body>
+```
+
+- single dimension JSON array
+```js
+<body>
+  <div id="resdiv"></div>
+  <script>
+    var str = $("#testTemplate").html();
+    var template = Handlebars.complie(str);
+    $(function(){
+      $.getJSON("people.json", function(res) {
+        var data = {people:res};
+        var rendered = template(data);
+        $("#resdiv").html(rendered);
+      });
+    });
+  </script>
+  
+  <script id="testTemplate" type="text/x-ejs-template">
+    {{#each people}}
+      {{this}}
+      {{!-- or --}}
+      {{.}}
+    {{/each}}
+  </script>
+</body>
+```
+
+- get outer scope variable
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "Ke", img:"Ke.jpg", homepage:"<i>secret</>",hobbies:['a','b','c']};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  {{name}}
+    {{#each hobbies}}
+      {{../name}} likes {{.}} {{!-- use outer scope's name--}}
+    {{/each}}
+</script>
+</body>
+```
+- boolean
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "Ke", img:"Ke.jpg", homepage:"<i>secret</>",hobbies:['a','b','c'], isBoolean:true};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  {{name}}
+  {{#if isboolean}}
+    condition3
+  {{else}}
+    condition4
+  {{/if}}
+  
+  {{#unless isboolean}}
+    condition5
+  {{/unless}}
+    {{#each hobbies}}
+      {{../name}} likes {{.}} {{!-- use outer scope's name--}}
+    {{/each}}
+</script>
+</body>
+```
+
+-with keyword
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "Ke", img:"Ke.jpg", homepage:"<i>secret</>",stats:{key1:"value1",key2:"value2"};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  {{#with stats}}
+    <table>
+      <tr>
+        <td>key1</td>
+        <td>{{key1}}</td>
+      </tr>
+      <tr>
+        <td>key2</td>
+        <td>{{key2}}</td>
+      </tr>
+    </table>
+  {{/with}}
+</script>
+</body>
+```
+- index, first, last
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "Ke", img:"Ke.jpg", homepage:"<i>secret</>",hobbies:['a','b','c'], isBoolean:true};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+    {{#each hobbies}}
+      {{if @first}}
+        condition
+      {{/if}}
+      Index:{{@index}}
+      Value:{{.}}
+      {{if @last}}
+        condition
+      {{/if}}
+    {{/each}}
+</script>
+</body>
+```
