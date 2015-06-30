@@ -128,7 +128,7 @@ $("#placeholder").html(result);
 ```
 ### 2.Handlebars
 
--basic conditions
+- basic conditions
 ```js
 {{#each people}}
   {{#if people.firstName}}
@@ -423,5 +423,41 @@ $("#placeholder").html(result);
   You are {{ gravatarurl email 100 'id'}} years old.
   {{!-- OR: gravatarurl email id=100 def='id'--}}
 </script>
+</body>
+```
+- partials
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+      stats:{
+        "y":10,
+        "n":5
+      }
+    };
+    var str = $("#stats").html();
+    Handlebars.registerPartial("stats",statTemplate);
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {{age}} years old.
+  {{> stats}}
+</script>
+
+<script id="stats" type="x-handlebars-template"
+  <table>
+    <tr>
+      <td>{{stat.y}}</td>
+      <td>{{stat.x}}</td>
+    </tr>
+  <table>
 </body>
 ```
