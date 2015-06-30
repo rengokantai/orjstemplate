@@ -262,7 +262,7 @@ $("#placeholder").html(result);
 </body>
 ```
 
--with keyword
+- with keyword
 ```js
 <body>
 <div id="resdiv"></div>
@@ -317,6 +317,111 @@ $("#placeholder").html(result);
         condition
       {{/if}}
     {{/each}}
+</script>
+</body>
+```
+
+- helpers
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  Handlebaars.registerHelper("ageHelper", function(text) {
+    if(!text) return "unknown"; //if age field does not exist
+    return text;
+  });
+  
+  $(function(){
+    var data = {name: "Ke", age:1};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {{ ageHelper age}} years old.
+</script>
+</body>
+```
+
+- little complex helper
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  Handlebaars.registerHelper("ageHelper", function(text) {
+    if(!text) return "unknown";
+    var age = parseInt(text,10);
+    if(age <= 0 || age > 150) return "unknown";
+    return text;
+  });
+  
+  $(function(){
+    var data = {name: "Ke", age:1};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {{ ageHelper age}} years old.
+</script>
+</body>
+```
+
+- image helper
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  Handlebaars.registerHelper("imageHelper", function(url) {
+    return Handlebars.SafeString("<img src=\"" = url = "\">");   //parse HTML code
+  });
+  
+  $(function(){
+    var data = {name: "Ke", img:"http://a.jpg"};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  {{imageHelper img}}
+</script>
+</body>
+```
+
+- multi param helper
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  Handlebaars.registerHelper("gravatarurl", function(email, size, def, rating) {
+    var str = 'http://...' + md5(email) + 'jpg?';
+    if(size) str += '&s='+size;
+    if(def) str += '&d' +encodeURI(def);
+    if(rating) str += '&r' +rating;
+    return str;
+  });
+  
+  $(function(){
+    var data = {name: "Ke", email:xxx@xxxx.com,};
+    var str = $("#testTemplate").html();
+    var template = Handlebars.compile(str);
+    var result = template(data);
+    $("#resdiv").html(result);
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {{ gravatarurl email 100 'id'}} years old.
+  {{!-- OR: gravatarurl email id=100 def='id'--}}
 </script>
 </body>
 ```
