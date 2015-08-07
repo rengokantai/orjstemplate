@@ -542,6 +542,7 @@ no
     </tr>
   <table>
   {/stats}
+</script>
 </body>
 ```
 - array dot syntax
@@ -571,6 +572,7 @@ no
     <li>{.}</li>
   {/hobbies}  
   </ul>
+</script>
 </body>
 ```
 - array of objects
@@ -600,6 +602,7 @@ no
     <li>{name}{level}</li>
   {/hobbies}  
   </ul>
+</script>
 </body>
 ```
 
@@ -681,7 +684,6 @@ dust.filter.titlecase = function(){
 ```
 
 - two level context
-- 
 ```js
 <body>
 <div id="resdiv"></div>
@@ -716,6 +718,183 @@ dust.filter.titlecase = function(){
     {:subTwo}
       xxxx
   {/describe}
+</script>
+</body>
+```
+- custom helper exapmle 1
+
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+    hobbies:["books","swimming"]
+    };
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {age} years old.
+
+  {@gt key="age" value="40"}
+    content
+  {/gt}  
+  //show period after last item.
+  My hobbies are {#hobbies}{.}{@sep},{/sep}{/hobbies}
+</script>
+</body>
+```
+
+- custom helper exapmle 2
+
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  dust.helpers.comment = function(chunk, context, bodies, params){
+    chunk.write("<!--");
+    chunk.render(bodies.block, context);
+    chunk.write("-->");
+    return chunk;
+  }
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+    hobbies:["books","swimming"]
+    };
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {age} years old.
+  
+  {@gt key="age" value="40"}
+    content
+  {/gt}  
+  //show period after last item.
+  {@comment}
+  My hobbies are {#hobbies}{.}{@sep},{/sep}{/hobbies}
+  {/comment}
+</script>
+</body>
+```
+
+- partials(similar to section data)
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+      stats:{
+        "y":10,
+        "n":5
+      }
+    };
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    /////
+    var newstr = $("#newTemplate").html();
+    var newtemplate = dust.compile(newstr,"newstrname");
+    dust.loadSource(newtemplate);
+    /////
+    dust.render("newstrname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {age} years old.
+  <h2>Stats</h2>
+  {#stats}
+  <table>
+    <tr>
+      <td>y</td>
+      <td>{y}</td>
+    </tr>
+    <tr>
+      <td>n</td>
+      <td>{n}</td>
+    </tr>
+  <table>
+  {/stats}
+</script>
+
+<script id="newTemplate" type="text/x-handlebars-template">
+  {>stats/}
+</script>
+</body>
+```
+
+- partials + if else
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+      stats:{
+        "y":10,
+        "n":5
+      }
+    };
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    /////
+    var newstr = $("#newTemplate").html();
+    var newtemplate = dust.compile(newstr,"newstrname");
+    dust.loadSource(newtemplate);
+    /////
+    dust.render("newstrname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {age} years old.
+  <h2>Stats</h2>
+  {^noTable}
+  {#stats}
+  <table>
+    <tr>
+      <td>y</td>
+      <td>{y}</td>
+    </tr>
+    <tr>
+      <td>n</td>
+      <td>{n}</td>
+    </tr>
+  <table>
+  {/stats}
+  {:else}
+  {#stats}
+  content
+  {/stats}
+  {/noTable}
+</script>
+
+<script id="newTemplate" type="text/x-handlebars-template">
+  {>stats noTable="true"/}
 </script>
 </body>
 ```
