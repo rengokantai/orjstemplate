@@ -464,7 +464,7 @@ $("#placeholder").html(result);
 
 ###3.Dust
 
--True False
+- True False
 ```js
 {?isTrue}
 xxx
@@ -500,7 +500,7 @@ no
 </script>
 
 <script id="testTemplate" type="text/x-dust-template">
-  <h1>Hello {{name}}</h1>
+  <h1>Hello {name}</h1>
 </script>
 </body>
 ```
@@ -528,7 +528,7 @@ no
 </script>
 
 <script id="testTemplate" type="text/x-handlebars-template">
-  You are {{age}} years old.
+  You are {age} years old.
   <h2>Stats</h2>
   {#stats}
   <table>
@@ -564,7 +564,7 @@ no
 </script>
 
 <script id="testTemplate" type="text/x-handlebars-template">
-  You are {{age}} years old.
+  You are {age} years old.
   <h2>Stats</h2>
   <ul>
   {#hobbies}
@@ -593,12 +593,129 @@ no
 </script>
 
 <script id="testTemplate" type="text/x-handlebars-template">
-  You are {{age}} years old.
+  You are {age} years old.
   <h2>Stats</h2>
   <ul>
   {#hobbies}
     <li>{name}{level}</li>
   {/hobbies}  
   </ul>
+</body>
+```
+
+- filter
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+  $(function(){
+    var data = {name: "<strong>Ke</strong>"};
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-dust-template">
+  <h1>Hello {name|h}</h1>
+</script>
+</body>
+```
+
+- custom filter
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+
+dust.filter.titlecase = function(){
+  return str.replace(/\w\S*/g, function(txt){return
+  txt.chatAt(0).toUpperCase() + txt.substr(1).toLowerCase();});};
+  
+  $(function(){
+    var data = {name: "book is mine"};
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-dust-template">
+  <h1>Hello {name}</h1>
+</script>
+</body>
+```
+
+- context helper
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+
+  
+  $(function(){
+    var data = {name: "book is mine",age:40,high:function(){
+    return this.age>10;}};
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-dust-template">
+  <h1>Hello {name}</h1>
+  {#high}
+    content....
+  {/high}
+</script>
+</body>
+```
+
+- two level context
+- 
+```js
+<body>
+<div id="resdiv"></div>
+<script type="text/javascript">
+
+  
+  $(function(){
+    var data = {name: "book is mine",age:40,
+    high:function(){
+      return this.age>10;
+    }
+    describe: function(chunk,context, bodies,params){
+    if(this.age<10) return true //simplest case
+    if(this.age<10){
+    return chunk.render(bodies.subOne, context);  //{:subOne} will show if this is true
+    
+    };
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+    dust.render("strname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+
+<script id="testTemplate" type="text/x-dust-template">
+  <h1>Hello {name}</h1>
+  {#describe}
+    {:subOne}
+      xxxxx
+    {:subTwo}
+      xxxx
+  {/describe}
+</script>
 </body>
 ```
