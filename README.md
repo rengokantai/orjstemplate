@@ -898,3 +898,45 @@ dust.filter.titlecase = function(){
 </script>
 </body>
 ```
+- precompilation
+npm install -g dust-linkedin
+
+dustc *.dust -o template.js
+
+For example:
+
+xxx.dust->template.js
+```js
+<script id="testTemplate" type="text/x-handlebars-template">
+  You are {{ ageHelper age}} years old.
+</script>
+```
+
+main file:
+```js
+<head>
+<script src="template.js"></script>
+<script type="text/javascript">
+  
+  $(function(){
+    var data = {name: "Ke", age:1
+      stats:{
+        "y":10,
+        "n":5
+      }
+    };
+    dust.render("newstrname",data,function(err,result){
+      $("#resdiv").html(result);
+    });
+  });
+</script>
+</head>
+```
+
+Note all compile-related code was deleted.
+like:
+```js
+    var str = $("#testTemplate").html();
+    var template = dust.compile(str,"strname");
+    dust.loadSource(template);
+```
